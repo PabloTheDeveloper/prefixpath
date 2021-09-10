@@ -1,0 +1,36 @@
+name: CI Workflow
+
+on:
+  push:
+    branches: [ main ]
+  
+  pull_request:
+    branches: [ main ]
+  
+  # allows you to run workflow from github.com
+  workflow_dispatch:
+
+jobs:
+  build-and-unit-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Setup Go Env
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.16
+
+    - name: Fetch Go Dependencies
+      run: go mod download
+
+    - name: Build Go Application
+      run: go build -v ./...
+    
+    - name: Lint Go Application
+      uses: Jerome1337/golint-action@v1.0.2
+
+    - name: Test Go Application
+      run: go test -v ./...
